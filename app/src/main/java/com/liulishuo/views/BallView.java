@@ -1,20 +1,17 @@
 package com.liulishuo.views;
 
-
+import android.animation.Keyframe;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.liulishuo.R;
-import com.liulishuo.Utils;
-import com.liulishuo.models.Ball;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -25,44 +22,30 @@ public class BallView extends View {
 
     private static final String TAG = "BallView";
 
-    private static final int HORIZONTAL = 0;
-    private static final int VERTICAL = 1;
-
-
-    private List<Ball> mBalls;
-    private int mNumberOfBalls = 5;
-    private int mScreenWidth;
-    private int mScreenHeight;
-
-    private int mOriention = 0;
+    private Paint mPaint;
+    private int mSize;
+    private Point mPoint;
 
 
     public BallView(Context context) {
         super(context);
-        init(null);
+        init();
     }
 
     public BallView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs);
+        init();
     }
 
     public BallView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(attrs);
+        init();
     }
 
-    private void init(AttributeSet attrs) {
-        mScreenHeight = Utils.getScreenHeight(getContext());
-        mScreenWidth = Utils.getScreenWidth(getContext());
-
-        if (attrs != null) {
-            TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.BallView);
-            mNumberOfBalls = attributes.getInt(R.styleable.BallView_balls, mNumberOfBalls);
-            mOriention = attributes.getInt(R.styleable.BallView_orientation, mOriention);
-            attributes.recycle();
-        }
-        createBalls();
+    private void init() {
+        mPaint = new Paint();
+        mPaint.setColor(generateRandomColor());
+        mPaint.setAntiAlias(true);
     }
 
     private int generateRandomColor() {
@@ -71,64 +54,78 @@ public class BallView extends View {
     }
 
 
-    public void reGenerate() {
-        mBalls.clear();
-        createBalls();
-        invalidate();
+    public Point getPoint() {
+        return mPoint;
     }
 
+    public void setPoint(Point mPoint) {
+        this.mPoint = mPoint;
+    }
 
-    private void createBalls() {
-        mBalls = new ArrayList<>();
+    public int getSize() {
+        return mSize;
+    }
 
-        for (int i = 0; i < mNumberOfBalls; i++) {
+    public void setSize(int mSize) {
+        this.mSize = mSize;
+    }
 
-            // Check Oriention
-            if (mOriention == HORIZONTAL) {
-                int itemWidth = mScreenWidth / mNumberOfBalls;
-                // ball random position
-                int offsetX = (int) (Math.random() * itemWidth);
-                int offsetY = (int) (Math.random() * mScreenHeight);
-                // ball size
-                int size = 0;
-
-                if (itemWidth - offsetX < offsetX) {
-                    size = (itemWidth - offsetX) / 2;
-                } else {
-                    size = offsetX / 2;
-                }
-
-                Ball ball = new Ball(size, generateRandomColor());
-
-
-                ball.setPosition(new Point(itemWidth * i + offsetX, offsetY));
-                mBalls.add(ball);
-
-            } else if (mOriention == VERTICAL) {
-
-                int itemWidth = mScreenHeight / mNumberOfBalls;
-
-                int offsetX = (int) (Math.random() * mScreenWidth);
-                int offsetY = (int) (Math.random() * itemWidth);
-                int size = 0;
-
-                if (itemWidth - offsetY < offsetY) {
-                    size = (itemWidth - offsetY) / 2;
-                } else {
-                    size = offsetY / 2;
-                }
-
-                Ball ball = new Ball(size, generateRandomColor());
-                ball.setPosition(new Point(offsetX, itemWidth * i + offsetY));
-                mBalls.add(ball);
-            }
-        }
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        mSize = MeasureSpec.getSize(widthMeasureSpec);
+        setMeasuredDimension(mSize, mSize);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (Ball ball : mBalls) {
-            ball.render(canvas);
-        }
+        canvas.drawCircle(mSize, mSize, mSize, mPaint);
     }
+
+    public void startAnimator() {
+        startShakeByPropertyAnim(this, 0.9f, 1.1f, 10f, 1000);
+    }
+
+    private void startShakeByPropertyAnim(View view, float scaleSmall, float scaleLarge, float shakeDegrees, long duration) {
+        if (view == null) {
+            return;
+        }
+
+        //先变小后变大
+        PropertyValuesHolder scaleXValuesHolder = PropertyValuesHolder.ofKeyframe(View.SCALE_X,
+                Keyframe.ofFloat(0f, 1.0f),
+                Keyframe.ofFloat(0.25f, scaleSmall),
+                Keyframe.ofFloat(0.5f, scaleLarge),
+                Keyframe.ofFloat(0.75f, scaleLarge),
+                Keyframe.ofFloat(1.0f, 1.0f)
+        );
+        PropertyValuesHolder scaleYValuesHolder = PropertyValuesHolder.ofKeyframe(View.SCALE_Y,
+                Keyframe.ofFloat(0f, 1.0f),
+                Keyframe.ofFloat(0.25f, scaleSmall),
+                Keyframe.ofFloat(0.5f, scaleLarge),
+                Keyframe.ofFloat(0.75f, scaleLarge),
+                Keyframe.ofFloat(1.0f, 1.0f)
+        );
+
+        //先往左再往右
+        PropertyValuesHolder rotateValuesHolder = PropertyValuesHolder.ofKeyframe(View.ROTATION,
+                Keyframe.ofFloat(0f, 0f),
+                Keyframe.ofFloat(0.1f, -shakeDegrees),
+                Keyframe.ofFloat(0.2f, shakeDegrees),
+                Keyframe.ofFloat(0.3f, -shakeDegrees),
+                Keyframe.ofFloat(0.4f, shakeDegrees),
+                Keyframe.ofFloat(0.5f, -shakeDegrees),
+                Keyframe.ofFloat(0.6f, shakeDegrees),
+                Keyframe.ofFloat(0.7f, -shakeDegrees),
+                Keyframe.ofFloat(0.8f, shakeDegrees),
+                Keyframe.ofFloat(0.9f, -shakeDegrees),
+                Keyframe.ofFloat(1.0f, 0f)
+        );
+
+        ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(view, scaleXValuesHolder, scaleYValuesHolder, rotateValuesHolder);
+        objectAnimator.setDuration(duration);
+        objectAnimator.start();
+    }
+
+
 }

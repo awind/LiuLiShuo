@@ -1,4 +1,4 @@
-package com.liulishuo;
+package com.liulishuo.utils;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
@@ -7,7 +7,7 @@ import android.view.WindowManager;
 /**
  * Created by fei on 16/6/8.
  */
-public class Utils {
+public class DeviceUtils {
 
     public static int getScreenWidth(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);

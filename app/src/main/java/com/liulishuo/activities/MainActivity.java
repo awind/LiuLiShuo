@@ -1,17 +1,18 @@
-package com.liulishuo;
+package com.liulishuo.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.liulishuo.R;
+import com.liulishuo.views.BallLayout;
 import com.liulishuo.views.BallView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BallView mBallView;
+    private BallLayout mBallLayout;
     private Toolbar mToolbar;
     private TextView mRefresh;
 
@@ -31,10 +32,26 @@ public class MainActivity extends AppCompatActivity {
         mRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBallView.reGenerate();
+                addCircle();
             }
         });
 
-        mBallView = (BallView) findViewById(R.id.balls);
+        mBallLayout = (BallLayout) findViewById(R.id.balls);
+        addCircle();
+    }
+
+
+    private void addCircle() {
+        mBallLayout.removeAllViews();
+        for (int i = 0; i < 5; i++) {
+            final BallView ballView = new BallView(getApplicationContext());
+            ballView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ballView.startAnimator();
+                }
+            });
+            mBallLayout.addView(ballView);
+        }
     }
 }

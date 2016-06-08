@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="BallView" >
-        <attr name="balls" format="integer"/>
-        <attr name="orientation" format="enum" >
-            <enum name="horizontal" value="0"/>
-            <enum name="vertical" value="1"/>
+
+    <declare-styleable name="BallLayout">
+        <attr name="balls" format="integer" />
+        <attr name="orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
         </attr>
 
     </declare-styleable>
-
 
 
 </resources>

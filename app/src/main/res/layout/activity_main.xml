@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         layout="@layout/layout_toolbar" />
 
-    <com.liulishuo.views.BallView
+    <com.liulishuo.views.BallLayout
         android:id="@+id/balls"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
