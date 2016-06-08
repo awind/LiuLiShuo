@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BallLayout mBallLayout;
     private Toolbar mToolbar;
+    private TextView mTitleTv;
     private TextView mRefresh;
 
 
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mToolbar.setTitle(R.string.app_name);
+        mTitleTv = (TextView) mToolbar.findViewById(R.id.title);
+        mTitleTv.setText(R.string.app_name);
         mRefresh = (TextView) mToolbar.findViewById(R.id.refresh);
         mRefresh.setOnClickListener(new View.OnClickListener() {
             @Override

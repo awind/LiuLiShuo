@@ -3,6 +3,7 @@ package com.liulishuo.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,10 +15,12 @@ import com.liulishuo.utils.DeviceUtils;
  */
 public class BallLayout extends ViewGroup {
 
+    private static final String TAG = "BallLayout";
+
     private static final int HORIZONTAL = 0;
     private static final int VERTICAL = 1;
 
-
+    // number of balls in layout
     private int mNumberOfBalls = 5;
     private int mScreenWidth;
     private int mScreenHeight;
@@ -83,11 +86,15 @@ public class BallLayout extends ViewGroup {
                 // 获取在onMeasure中计算的视图尺寸
                 int measureHeight = childView.getMeasuredHeight();
                 int measuredWidth = childView.getMeasuredWidth();
+                int size = MeasureSpec.getSize(measuredWidth);
 
+                double random = Math.random() ;
 
                 int x = itemWidth * i;
-                int y = (int) (Math.random() * mScreenHeight);
-                childView.layout(x, y, x + measuredWidth * 2, y + measureHeight * 2);
+                int y = (int) (random * mScreenHeight) / 2;
+
+
+                childView.layout(x, y, x + size * 2, y + size * 2);
             }
         } else if (mOriention == VERTICAL) {
             for (int i = 0; i < getChildCount(); i++) {
@@ -100,7 +107,7 @@ public class BallLayout extends ViewGroup {
                 int measuredWidth = childView.getMeasuredWidth();
 
 
-                int x = (int) (Math.random() * itemWidth);
+                int x = (int) (Math.random() * mScreenWidth) / 2;
                 int y = itemWidth * i;
                 childView.layout(x, y, x + measuredWidth * 2, y + measureHeight * 2);
             }
